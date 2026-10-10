@@ -1,0 +1,17 @@
+[package]
+name = "geri-binding-http"
+description = "Géri v4 message set over HTTP: ToHub ↔ request, response ↔ ToSource. Pure, no I/O, no_std."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version = "1.85"
+keywords = ["telemetry", "protocol", "iot", "no-std"]
+categories = ["no-std", "network-programming", "embedded"]
+
+[dependencies]
+geri-proto = { workspace = true, features = ["cbor"] }
+serde = { version = "1", default-features = false, features = ["alloc"] }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+thiserror = { version = "2", default-features = false }

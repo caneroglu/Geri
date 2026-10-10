@@ -1,0 +1,3 @@
+{"source_id":"nasa-sat-01","label":"NASA Sat 01","kind":"satellite","entities":[
+  {"source_id":"nasa-sat-01","entity_id":"battery","label":"Battery","kind":"gauge"},
+  {"source_id":"nasa-sat-01","entity_id":"orbit","label":"Orbit","kind":"feed"}]}

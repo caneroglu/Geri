@@ -1,0 +1,20 @@
+[package]
+name = "geri-store-sqlite"
+description = "SQLite outbox for the Géri source SDK: durable, crash-safe, survives restarts."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "outbox", "sqlite", "iot"]
+categories = ["database", "network-programming"]
+
+[dependencies]
+geri-adapter-sdk.workspace = true
+geri-proto.workspace = true
+rusqlite = { version = "0.37", features = ["bundled"] }
+serde_json = "1"
+thiserror = "2"
+
+[dev-dependencies]
+tempfile = "3"

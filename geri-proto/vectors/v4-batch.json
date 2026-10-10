@@ -1,0 +1,17 @@
+{
+  "v": 4,
+  "records": [
+    {
+      "source_id": "router",
+      "entity_id": "cpu",
+      "record_id": "router-1",
+      "sequence": 1,
+      "kind": "state",
+      "event_time_ms": 123,
+      "content_type": "application/json",
+      "data": {
+        "pct": 12.5
+      }
+    }
+  ]
+}

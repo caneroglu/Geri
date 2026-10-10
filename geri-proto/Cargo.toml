@@ -1,0 +1,29 @@
+[package]
+name = "geri-proto"
+description = "Wire protocol, value model, and batch contracts for the Géri telemetry & control plane."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version = "1.85"
+readme = "README.md"
+documentation = "https://docs.rs/geri-proto"
+keywords = ["telemetry", "protocol", "iot", "cbor", "no-std"]
+categories = ["no-std", "encoding", "network-programming", "embedded"]
+
+[dependencies]
+serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+thiserror = { version = "2", default-features = false }
+minicbor-serde = { version = "0.7", default-features = false, features = ["alloc"], optional = true }
+minicbor = { version = "2", default-features = false, optional = true }
+
+[features]
+default = ["cbor"]
+cbor = ["dep:minicbor-serde", "dep:minicbor"]
+
+[dev-dependencies]
+minicbor = { version = "2", features = ["alloc"] }
+minicbor-serde = { version = "0.7", features = ["alloc"] }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
