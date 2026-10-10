@@ -10,6 +10,10 @@
 
 **Türkçe** · [English](README.en.md)
 
+- [Géri ile ilgili post.](https://can-eroglu.com/posts/geri/)
+- [Nasıl kullanıyorum?](https://lab.can-eroglu.com)
+
+
 Masamda bir sürü küçük kart var: router, ESP32, bir de 20 KB RAM'li minicik bir Blue Pill.
 Hepsi bana bir şeyler söylesin, ben de onlara bir şeyler söyleyebileyim istedim.
 Elektrik gitse, internet kopsa bile hiçbir şey kaybolmasın.
