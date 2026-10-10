@@ -2,6 +2,9 @@
 
 > 🐺 ***Geri** ("the ravenous") is one of Odin's two wolves. Whatever you put on the table, he eats.*
 
+- [A post about Géri.](https://can-eroglu.com/posts/geri/)
+- [How i use it?](https://lab.can-eroglu.com)
+
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg?logo=rust)](https://blog.rust-lang.org/2025/02/20/Rust-1.85.0.html)
 [![no_std](https://img.shields.io/badge/no__std-compatible-success.svg)](geri-proto)
