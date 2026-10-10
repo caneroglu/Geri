@@ -1,0 +1,38 @@
+[package]
+name = "geri-sdk-linux"
+description = "Géri source SDK for Linux: tokio driver, SQLite outbox, WebSocket with HTTP fallback, ready in one call."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "iot", "sdk", "linux"]
+categories = ["network-programming"]
+
+[dependencies]
+geri-adapter-sdk.workspace = true
+geri-proto.workspace = true
+geri-sign = { workspace = true, features = ["std"] }
+geri-store-sqlite.workspace = true
+geri-transport-reqwest.workspace = true
+geri-transport-ws.workspace = true
+geri-transport-tcp = { workspace = true, features = ["noise"], optional = true }
+geri-transport-quinn = { workspace = true, optional = true }
+getrandom = { version = "0.3", features = ["std"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["rt", "sync", "time", "macros"] }
+
+[features]
+default = []
+tcp = ["dep:geri-transport-tcp"]
+quic = ["dep:geri-transport-quinn"]
+
+[dev-dependencies]
+geri-sdk-linux = { path = ".", features = ["tcp", "quic"] }
+axum = { version = "0.8", features = ["http1", "tokio"] }
+geri-binding-http.workspace = true
+reqwest = { version = "0.12", default-features = false, features = ["stream", "json"] }
+futures-util = "0.3"
+tokio-tungstenite = "0.30"
+tokio = { version = "1", features = ["rt-multi-thread", "net"] }

@@ -1,0 +1,42 @@
+[package]
+name = "geri-hubd"
+description = "Standalone SQLite WAL & HTTP server for the Géri telemetry and control plane."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+geri-proto.workspace = true
+geri-core.workspace = true
+geri-view.workspace = true
+maud = "0.27"
+datastar = { version = "0.4", features = ["axum"] }
+geri-binding-http.workspace = true
+geri-binding-stream.workspace = true
+geri-sign.workspace = true
+geri-noise = { workspace = true, features = ["tokio"] }
+geri-transport-quinn.workspace = true
+quinn = { version = "0.11", default-features = false, features = ["runtime-tokio", "rustls-ring"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
+axum = { version = "0.8", features = ["http1", "tokio", "json", "ws"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.37", features = ["bundled", "backup"] }
+sha2 = "0.10"
+subtle = "2.6"
+base64 = "0.22"
+hex = "0.4"
+getrandom = "0.3"
+futures-util = "0.3"
+
+[dev-dependencies]
+geri-sign = { workspace = true, features = ["std"] }
+tempfile = "3"
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+tokio-tungstenite = "0.30"
+geri-adapter-sdk.workspace = true
+geri-transport-tcp = { workspace = true, features = ["noise"] }
+futures-util = "0.3"

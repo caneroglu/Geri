@@ -1,0 +1,26 @@
+[package]
+name = "geri-transport-quinn"
+description = "QUIC transport for the Géri source SDK (quinn): one stream, survives address changes; pinned hub key or CA certificates."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "quic", "iot", "transport"]
+categories = ["network-programming"]
+
+[dependencies]
+geri-transport-tcp.workspace = true
+ed25519-dalek = { version = "2.1", default-features = false, features = ["alloc", "pkcs8"] }
+quinn = { version = "0.11", default-features = false, features = ["runtime-tokio", "rustls-ring"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
+thiserror = "2"
+tokio = { version = "1", features = ["io-util", "net"] }
+webpki-roots = "1"
+
+[dev-dependencies]
+geri-adapter-sdk.workspace = true
+geri-proto.workspace = true
+geri-binding-stream.workspace = true
+geri-sign = { workspace = true, features = ["std"] }
+tokio = { version = "1", features = ["io-util", "macros", "net", "rt-multi-thread", "time"] }

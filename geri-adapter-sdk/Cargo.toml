@@ -1,0 +1,19 @@
+[package]
+name = "geri-adapter-sdk"
+description = "Sans-io core of the Géri source SDK: session state machine, outbox and transport traits. no_std."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version = "1.85"
+keywords = ["telemetry", "protocol", "iot", "no-std", "sans-io"]
+categories = ["no-std", "network-programming", "embedded"]
+
+[dependencies]
+geri-proto.workspace = true
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+sha2 = { version = "0.10", default-features = false }
+hex = { version = "0.4", default-features = false, features = ["alloc"] }
+serde = { version = "1", default-features = false }
+thiserror = { version = "2", default-features = false }

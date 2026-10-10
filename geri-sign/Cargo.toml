@@ -1,0 +1,19 @@
+[package]
+name = "geri-sign"
+description = "Signed requests for Géri: Ed25519 over the request, replay window by counter, no clock."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "iot", "ed25519", "no-std"]
+categories = ["cryptography", "no-std"]
+
+[features]
+default = []
+std = ["ed25519-dalek/std", "hex/std"]
+
+[dependencies]
+ed25519-dalek = { version = "2.1", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+hex = { version = "0.4", default-features = false }

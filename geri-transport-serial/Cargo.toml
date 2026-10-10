@@ -1,0 +1,27 @@
+[package]
+name = "geri-transport-serial"
+description = "Serial line transport for the Géri source SDK, plus a serial ↔ WebSocket bridge for devices without a network."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "serial", "uart", "iot", "transport"]
+categories = ["network-programming", "embedded"]
+
+[dependencies]
+geri-adapter-sdk.workspace = true
+geri-binding-serial.workspace = true
+geri-proto.workspace = true
+geri-transport-ws.workspace = true
+serde = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["io-util", "macros", "rt-multi-thread", "time"] }
+tokio-serial = { version = "5", default-features = false }
+
+[dev-dependencies]
+geri-sdk-linux.workspace = true
+geri-binding-stream.workspace = true
+futures-util = "0.3"
+serde_json = "1"
+tokio-tungstenite = "0.30"

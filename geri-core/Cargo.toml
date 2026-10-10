@@ -1,0 +1,14 @@
+[package]
+name = "geri-core"
+description = "Sans-I/O decision, state reconciliation, and Ed25519 audit engine for Géri."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+geri-proto.workspace = true
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+hex = { version = "0.4", default-features = false, features = ["alloc"] }
+sha2 = { version = "0.10", default-features = false }
+ed25519-dalek = { version = "2.1", default-features = false, features = ["alloc"] }

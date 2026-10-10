@@ -1,0 +1,50 @@
+[workspace]
+resolver = "3"
+members = [
+    "geri-proto",
+    "geri-core",
+    "geri-view",
+    "geri-hubd",
+    "geri-adapter-sdk",
+    "geri-binding-http",
+    "geri-binding-stream",
+    "geri-store-sqlite",
+    "geri-transport-reqwest",
+    "geri-transport-ws",
+    "geri-sdk-linux",
+    "geri-binding-serial",
+    "geri-transport-serial",
+    "geri-store-flash",
+    "geri-sign",
+    "geri-noise",
+    "geri-transport-tcp",
+    "geri-transport-quinn",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/caneroglu/geri"
+authors = ["Can Eroğlu"]
+
+[workspace.dependencies]
+geri-proto = { version = "0.1.0", path = "geri-proto" }
+geri-core = { version = "0.1.0", path = "geri-core" }
+geri-view = { version = "0.1.0", path = "geri-view" }
+geri-hubd = { version = "0.1.0", path = "geri-hubd" }
+geri-adapter-sdk = { version = "0.1.0", path = "geri-adapter-sdk" }
+geri-binding-http = { version = "0.1.0", path = "geri-binding-http" }
+geri-binding-stream = { version = "0.1.0", path = "geri-binding-stream" }
+geri-store-sqlite = { version = "0.1.0", path = "geri-store-sqlite" }
+geri-transport-reqwest = { version = "0.1.0", path = "geri-transport-reqwest" }
+geri-transport-ws = { version = "0.1.0", path = "geri-transport-ws" }
+geri-sdk-linux = { version = "0.1.0", path = "geri-sdk-linux" }
+geri-binding-serial = { version = "0.1.0", path = "geri-binding-serial" }
+geri-store-flash = { version = "0.1.0", path = "geri-store-flash" }
+geri-transport-serial = { version = "0.1.0", path = "geri-transport-serial" }
+geri-sign = { version = "0.1.0", path = "geri-sign" }
+geri-noise = { version = "0.1.0", path = "geri-noise" }
+geri-transport-tcp = { version = "0.1.0", path = "geri-transport-tcp" }
+geri-transport-quinn = { version = "0.1.0", path = "geri-transport-quinn" }
+

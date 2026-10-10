@@ -1,0 +1,25 @@
+[package]
+name = "geri-noise"
+description = "Noise IK channel for Géri: device and hub authenticate with their Ed25519 keys and encrypt any byte stream (TCP, serial, relays) end to end."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords = ["telemetry", "noise", "encryption", "iot", "no-std"]
+categories = ["cryptography", "network-programming", "embedded", "no-std"]
+
+[features]
+default = []
+getrandom = ["clatter/getrandom"]
+tokio = ["getrandom", "dep:tokio"]
+
+[dependencies]
+clatter = { version = "2.3", default-features = false, features = ["use-25519", "use-chacha20poly1305", "use-blake2"] }
+ed25519-dalek = { version = "2.1", default-features = false }
+thiserror = { version = "2", default-features = false }
+tokio = { version = "1", features = ["io-util"], optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["io-util", "macros", "rt", "time"] }
+geri-noise = { path = ".", features = ["tokio"] }
