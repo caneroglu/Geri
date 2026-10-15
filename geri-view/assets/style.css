@@ -112,9 +112,13 @@ body {
 .grid {
   --cols: 1;
   display: grid;
+  /* Doğal genişlik kolon sayısından gelir (kasa buna göre boyutlanır); kasa başka bir panel yüzünden
+     (ör. uzun satırlı komut defteri) daha genişse ızgara onu doldurur. Kolon sayısı yine `--cols`'u
+     geçmez: her kolon en az genişliğin 1/cols'u kadardır. */
   width: calc(var(--cols) * var(--module) + (var(--cols) - 1) * var(--gutter));
+  min-width: 100%;
   max-width: 100%;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--module)), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--module), calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)))), 1fr));
   grid-auto-flow: row;
   column-gap: var(--gutter);
   align-items: stretch;
