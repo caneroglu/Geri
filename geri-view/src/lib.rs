@@ -478,6 +478,15 @@ pub fn tile(t: &Tile) -> Markup {
 }
 
 pub(crate) fn brief_with(v: &Value, presenter: Option<&dyn Presenter>) -> Option<(String, Level)> {
+    brief_clipped(v, presenter, BRIEF_CHARS)
+}
+
+/// `brief_with`, ama kırpma sınırı çağırandan: filo kutucuğu dar (12), detay satırı geniş (CSS keser).
+pub(crate) fn brief_clipped(
+    v: &Value,
+    presenter: Option<&dyn Presenter>,
+    max: usize,
+) -> Option<(String, Level)> {
     if let Some(result) = presenter.and_then(|p| p.brief(v)) {
         return result;
     }
@@ -494,7 +503,7 @@ pub(crate) fn brief_with(v: &Value, presenter: Option<&dyn Presenter>) -> Option
             Some(brief) => brief.to_owned(),
             None => format!("{number:.1}{unit}"),
         };
-        return Some((clip_chars(text.trim_end().into(), BRIEF_CHARS), level));
+        return Some((clip_chars(text.trim_end().into(), max), level));
     }
     let text = match v {
         Value::Bool(b) => (if *b { "açık" } else { "kapalı" }).into(),
@@ -502,7 +511,7 @@ pub(crate) fn brief_with(v: &Value, presenter: Option<&dyn Presenter>) -> Option
         Value::List(l) => format!("{} öğe", l.len()),
         v => show(v),
     };
-    Some((clip_chars(text, BRIEF_CHARS), Level::Ok))
+    Some((clip_chars(text, max), Level::Ok))
 }
 
 pub(crate) fn gauge_level(v: &Value, pct: f32) -> Level {
@@ -759,7 +768,7 @@ mod tests {
         assert!(
             body.contains(">wifi<") && body.contains(r#"<div class="sub caption">clients</div>"#)
         );
-        assert!(body.contains("<dt>bant</dt><dd>5 GHz</dd>"));
+        assert!(body.contains(r#"<dt>bant</dt><dd title="5 GHz">5 GHz</dd>"#));
         assert!(body.contains(r#"class="cell w2 h2""#) && body.contains(">ilk<"));
         let long = Values::from([("clients".into(), Value::Text("x".repeat(500)))]);
         assert!(
@@ -901,6 +910,44 @@ mod tests {
         assert!(!body.contains("' → '"));
         assert!(body.contains(">KAYDET<"));
         assert!(CODE_JS.contains("customElements.define('geri-code'") && HL_JS.contains("GeriHL"));
+    }
+
+    #[test]
+    fn detail_lines_are_not_clipped_to_tile_width() {
+        let e = [
+            Entity::new("freki", "models").label("durum").group("modeller"),
+            Entity::new("freki", "keys").label("anahtarlar").group("modeller"),
+        ];
+        let long = "OpenRouter ✓ …1f47 · $0.22 / $50 · Anthropic yok";
+        let v = Values::from([
+            ("models".into(), Value::Text("✓ 6 rol · 4 API, 2 abonelik".into())),
+            ("keys".into(), Value::Text(long.into())),
+        ]);
+        let body = body(&Sheet::read_only(&e, &v));
+        assert!(body.contains(&format!(r#"<dd title="{long}">{long}</dd>"#)), "{body}");
+    }
+
+    #[test]
+    fn unreported_text_box_is_not_dirty_until_edited() {
+        let e = [Entity::new("freki", "job.start")
+            .label("iş başlat")
+            .control(Shape::Text { max: 256 }, Danger::Risky)];
+        let v = Values::new();
+        let sheet = Sheet {
+            entities: &e,
+            values: &v,
+            commands: &[],
+            commander: Some(Commander {
+                endpoint: "/odn/commands",
+                live: true,
+            }),
+            presenter: None,
+        };
+        let body = body(&sheet);
+        let key = signal_key("freki", "job.start");
+        // Boş kutu, karşılaştırma da boş metinle: "null →" ve KAYDET kendiliğinden görünmez.
+        assert!(body.contains(&format!("$_c_{key} != ''")), "{body}");
+        assert!(!body.contains("!= null") && !body.contains("null + ' → '"));
     }
 
     #[test]

@@ -368,7 +368,8 @@ body {
 /* ── panel satırları: etiket sol, değer sağa yaslı (tabular) ─────── */
 .lines { display: grid; grid-template-columns: auto 1fr; column-gap: 2ch; margin: 0.3lh 0 0; }
 .lines dt { color: var(--foreground2); }
-.lines dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Sığmayan değer alt satıra geçer (telefonda üstüne gelip tamamını görmek yok). */
+.lines dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 
 /* ── detay sayfası liste paneli: sınırsız, disiplinli max-en, hover URI ── */
 .items {

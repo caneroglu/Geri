@@ -29,8 +29,11 @@ fn main() {
             .kind("text")
             .group("Sistem"),
         Entity::new("fixture", "job").label("iş").kind("text"),
+        Entity::new("fixture", "status").label("durum").kind("text").group("modeller"),
+        Entity::new("fixture", "keys").label("anahtarlar").kind("text").group("modeller"),
         Entity::new("fixture", "config")
             .label("ayar")
+            .group("modeller")
             .control(Shape::code(2048, Some("toml")), Danger::Risky),
     ];
     let values = Values::from([
@@ -55,6 +58,8 @@ fn main() {
         ("cpu".into(), Value::Float(42.5)),
         ("ram".into(), Value::Float(71.0)),
         ("power".into(), Value::Text("running".into())),
+        ("status".into(), Value::Text("✓ 6 rol · 4 API, 2 abonelik".into())),
+        ("keys".into(), Value::Text("OpenRouter ✓ …1f47 · $0.22 / $50 · Anthropic yok".into())),
         ("job".into(), Value::Text("circle-packing · nesil 12/20 · en iyi 2.493".into())),
         (
             "config".into(),

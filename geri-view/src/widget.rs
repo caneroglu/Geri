@@ -32,13 +32,15 @@ pub(crate) fn control(e: &Entity, c: &Control, sheet: &Sheet, face: Commander) -
             action = js_str(c.shape.action()),
         )
     };
-    let current = reported.map_or("null".into(), js);
     let init = match (&c.shape, reported) {
+        (_, Some(v)) => js(v),
         (Shape::Range { min, .. }, None) => format!("{min}"),
         (Shape::Text { .. } | Shape::Code { .. }, None) => "''".into(),
         (Shape::Choice { options }, None) => options.first().map_or("''".into(), |o| js_str(o)),
-        _ => current.clone(),
+        _ => "null".into(),
     };
+    // Değer bildirilmemişse kutunun başlangıcı karşılaştırma tabanıdır: dokunulmadan "değişti" sayılmaz.
+    let current = init.clone();
     let signals = format!("{{{}: {init}, {}: ''}}", s.value, s.err);
     let label = e.label.as_str();
     let changed = format!("${} != {current}", s.value);

@@ -120,7 +120,7 @@ impl SourceView {
             .map(|c| Cmd {
                 name: &c.audit.command.entity_id,
                 desired: &c.desired,
-                state: c.state(&self.values),
+                state: c.state(&self.values, now_ms),
                 ago: now_ms.saturating_sub(c.audit.command.issued_at_ms) / 1000,
             })
             .collect()
@@ -142,7 +142,7 @@ impl SourceView {
     }
     fn observe_commands(&self) {
         for command in &self.commands {
-            command.state(&self.values);
+            command.state(&self.values, 0);
         }
     }
 
@@ -238,6 +238,10 @@ impl From<StoredRecord> for EventView {
     }
 }
 
+/// Düğüm "tamam" dedikten sonra değeri bildirmesi için tanınan süre. Sonrasında, değer istenenden farklı
+/// olsa da (sayfa yenilendi ya da değer sonradan değişti) komut TAMAM sayılır; sonsuza dek UYGULANIYOR kalmaz.
+pub(crate) const APPLY_GRACE_MS: u64 = 120_000;
+
 pub struct CommandView {
     pub audit: CommandAudit,
     desired: Value,
@@ -273,7 +277,7 @@ impl From<CommandAudit> for CommandView {
 }
 
 impl CommandView {
-    fn state<'a>(&'a self, values: &Values) -> CmdState<'a> {
+    fn state<'a>(&'a self, values: &Values, now_ms: u64) -> CmdState<'a> {
         match self.audit.status {
             CommandStatus::Queued => CmdState::Sent,
             CommandStatus::Dispatched => CmdState::Applying,
@@ -303,6 +307,12 @@ impl CommandView {
                         CmdState::Done
                     }
                     Some(true) if self.confirmed.get() => CmdState::Drift,
+                    Some(true)
+                        if now_ms.saturating_sub(self.audit.command.issued_at_ms)
+                            >= APPLY_GRACE_MS =>
+                    {
+                        CmdState::Done
+                    }
                     Some(true) => CmdState::Applying,
                     None => CmdState::Lost,
                 }
@@ -417,6 +427,12 @@ mod tests {
             CmdState::Drift,
             "doğrulanmış değer daha sonra değişince kontrol kilitlenmez"
         );
+        // Sayfa yenilendi (onay belleği yok) ve düğüm artık başka değer bildiriyor: düğüm "tamam" dediyse
+        // kısa uygulama penceresinden sonra TAMAM; sonsuza dek UYGULANIYOR değil.
+        let fresh: CommandView = source.commands[0].audit.clone().into();
+        source.commands = vec![fresh];
+        assert_eq!(source.commands(1000 + APPLY_GRACE_MS - 1)[0].state, CmdState::Applying);
+        assert_eq!(source.commands(1000 + APPLY_GRACE_MS)[0].state, CmdState::Done);
         source.commands[0].audit.command.action = "press".into();
         source.values.clear();
         assert_eq!(source.commands(3000)[0].state, CmdState::Done);

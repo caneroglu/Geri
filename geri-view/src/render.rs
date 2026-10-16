@@ -248,7 +248,8 @@ fn panel(sheet: &Sheet, key: &str, members: &[&Entity], state: &mut Presentation
             @if !lines.is_empty() {
                 dl class="lines" {
                     @for (k, v) in &lines {
-                        dt { (k) } dd { (line(v, sheet.presenter)) }
+                        @let text = line(v, sheet.presenter);
+                        dt { (k) } dd title=(text) { (text) }
                     }
                 }
             }
@@ -274,7 +275,7 @@ fn panel(sheet: &Sheet, key: &str, members: &[&Entity], state: &mut Presentation
 }
 
 fn line(v: &Value, presenter: Option<&dyn Presenter>) -> String {
-    crate::brief_with(v, presenter).map_or_else(|| show(v), |(text, _)| text)
+    crate::brief_clipped(v, presenter, SHOW_MAX).map_or_else(|| show(v), |(text, _)| text)
 }
 
 fn body(v: &Value) -> PresentedBody {
