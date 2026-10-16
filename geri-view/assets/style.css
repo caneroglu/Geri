@@ -147,6 +147,8 @@ body {
    yapışır. İçerik çizgiden yanlarda 1.5ch, altta 0.75lh uzak dursun; başlık üst çizgide kalır. */
 .panel { padding-inline: 2ch; padding-bottom: 1.25lh; }
 .panel-head { margin-bottom: 0.4lh; }
+/* Filo kutucuğu dar ve değerleri üç kolon; yanlarda biraz daha az boşluk (yoksa değerler kesilir). */
+.tile .panel { padding-inline: 1.5ch; }
 
 .panel-head { display: flex; justify-content: space-between; }
 .panel-head [is-~=badge] { --badge-color: var(--background1); --badge-text: var(--foreground2); }
