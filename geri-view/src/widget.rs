@@ -35,7 +35,7 @@ pub(crate) fn control(e: &Entity, c: &Control, sheet: &Sheet, face: Commander) -
     let current = reported.map_or("null".into(), js);
     let init = match (&c.shape, reported) {
         (Shape::Range { min, .. }, None) => format!("{min}"),
-        (Shape::Text { .. }, None) => "''".into(),
+        (Shape::Text { .. } | Shape::Code { .. }, None) => "''".into(),
         (Shape::Choice { options }, None) => options.first().map_or("''".into(), |o| js_str(o)),
         _ => current.clone(),
     };
@@ -84,6 +84,14 @@ pub(crate) fn control(e: &Entity, c: &Control, sheet: &Sheet, face: Commander) -
             input type="text" maxlength=(max) data-bind=(s.value) disabled[lock.is_some()];
             (save(&s, &changed, &current, &send, c.danger, lock))
         },
+        Shape::Code { max, lang } => html! {
+            geri-code data-lang=[lang.as_deref()] {
+                pre data-ignore-morph aria-hidden="true" { code {} }
+                textarea maxlength=(max) rows="1" spellcheck="false" autocapitalize="off" autocomplete="off"
+                    aria-label=(label) data-bind=(s.value) disabled[lock.is_some()] {}
+            }
+            (save_quiet(&s, &changed, &current, &send, c.danger, lock))
+        },
         Shape::Item { of } => items(reported, of, c.danger, lock, &send),
         Shape::Unknown => html! { span class="dim" { "salt okunur" } },
     };
@@ -100,7 +108,7 @@ pub(crate) fn control(e: &Entity, c: &Control, sheet: &Sheet, face: Commander) -
         div id={ "ctl-" (e.entity_id) } class=(classes) data-signals__ifmissing=(signals) {
             div class="ctl-row" {
                 @if !matches!(c.shape, Shape::Trigger | Shape::Item { .. }) { span class="k" { (label) } }
-                span class="w" { (widget) }
+                span class={ "w" @if matches!(c.shape, Shape::Code { .. }) { " block" } } { (widget) }
             }
             @if let Some((class, text)) = state { div class={ "state " (class) } { (text) } }
             @if let Some(why) = lock.filter(|_| !face.live) { div class="state dim" { (why) } }
@@ -181,9 +189,33 @@ fn save(
     lock: Option<&str>,
 ) -> Markup {
     let diff = format!("{current} + ' → ' + ${}", s.value);
+    save_with(s, changed, current, send, danger, lock, Some(&diff))
+}
+
+/// Çok satırlı değerde "eski → yeni" satıra sığmaz; yalnız düğmeler.
+fn save_quiet(
+    s: &Sig,
+    changed: &str,
+    current: &str,
+    send: &dyn Fn(&str) -> String,
+    danger: Danger,
+    lock: Option<&str>,
+) -> Markup {
+    save_with(s, changed, current, send, danger, lock, None)
+}
+
+fn save_with(
+    s: &Sig,
+    changed: &str,
+    current: &str,
+    send: &dyn Fn(&str) -> String,
+    danger: Danger,
+    lock: Option<&str>,
+    diff: Option<&str>,
+) -> Markup {
     html! {
         span class="save" data-show=(changed) style="display:none" {
-            span class="diff" data-text=(diff) {}
+            @if let Some(diff) = diff { span class="diff" data-text=(diff) {} }
             (act("KAYDET", &format!("${}", s.value), send, danger, lock))
             button class="act" data-on:click={ "el.closest('.save').querySelector('geri-action')?.cancel(); $" (s.value) " = " (current) } { "VAZGEÇ" }
         }

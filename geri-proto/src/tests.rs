@@ -96,10 +96,24 @@ fn controls_carry_shape_and_danger() {
         Shape::Bool,
         Shape::choice(["2.4", "5"]),
         Shape::Text { max: 64 },
+        Shape::code(4096, Some("toml")),
+        Shape::code(4096, None),
         Shape::item(Shape::Bool),
     ] {
         roundtrip(&Control::new(shape, Danger::Destructive));
     }
+}
+
+#[test]
+fn code_shape_wire_form() {
+    assert_eq!(
+        serde_json::to_value(Shape::code(2048, Some("toml"))).unwrap(),
+        json!({"type": "code", "max": 2048, "lang": "toml"})
+    );
+    assert_eq!(
+        serde_json::to_value(Shape::code(2048, None)).unwrap(),
+        json!({"type": "code", "max": 2048})
+    );
 }
 
 #[test]
@@ -164,6 +178,18 @@ fn shapes_validate_and_normalize_commands() {
         Err(Invalid::Range)
     );
 
+    let code = Shape::code(8, Some("toml"));
+    assert_eq!(
+        code.accept(&Value::Text("a = 1\nb".into())),
+        Ok(Value::Text("a = 1\nb".into()))
+    );
+    assert_eq!(
+        code.accept(&Value::Text("a = 1\nbcd".into())),
+        Err(Invalid::Range)
+    );
+    assert_eq!(code.accept(&Value::Bool(true)), Err(Invalid::Type));
+    assert_eq!(code.action(), SET);
+
     let item = Shape::item(Shape::Bool);
     let cmd = |id: &str, v: Value| {
         Value::Map(BTreeMap::from([
@@ -222,6 +248,8 @@ fn structurally_broken_shapes_are_invalid() {
     );
     assert!(!Shape::choice(Vec::<String>::new()).is_valid());
     assert!(!Shape::Text { max: 0 }.is_valid());
+    assert!(!Shape::code(0, None).is_valid());
+    assert!(!Shape::code(64, Some("")).is_valid());
     assert!(!Shape::item(Shape::item(Shape::Bool)).is_valid());
     assert!(Shape::item(Shape::Trigger).is_valid());
 }

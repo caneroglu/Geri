@@ -32,6 +32,12 @@ pub enum Shape {
     Text {
         max: u32,
     },
+    /// Çok satırlı metin; `lang` (ör. "toml") yalnızca görünümde sözdizimi vurgusu içindir.
+    Code {
+        max: u32,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        lang: Option<String>,
+    },
     Item {
         of: Box<Shape>,
     },
@@ -78,6 +84,7 @@ impl Shape {
             }
             Self::Choice { options } => !options.is_empty(),
             Self::Text { max } => *max > 0,
+            Self::Code { max, lang } => *max > 0 && lang.as_ref().is_none_or(|l| !l.is_empty()),
             Self::Item { of } => {
                 !matches!(**of, Self::Item { .. } | Self::Unknown) && of.is_valid()
             }
@@ -106,10 +113,12 @@ impl Shape {
                 Ok(Value::Text(t.clone()))
             }
             (Self::Choice { .. }, Value::Text(_)) => Err(Invalid::Range),
-            (Self::Text { max }, Value::Text(t)) if t.chars().count() <= *max as usize => {
+            (Self::Text { max } | Self::Code { max, .. }, Value::Text(t))
+                if t.chars().count() <= *max as usize =>
+            {
                 Ok(Value::Text(t.clone()))
             }
-            (Self::Text { .. }, Value::Text(_)) => Err(Invalid::Range),
+            (Self::Text { .. } | Self::Code { .. }, Value::Text(_)) => Err(Invalid::Range),
             (Self::Item { of }, Value::Map(m)) => {
                 let Some(Value::Text(id)) = m.get("id") else {
                     return Err(Invalid::Type);
@@ -184,6 +193,13 @@ impl Shape {
     pub fn choice<S: Into<String>>(options: impl IntoIterator<Item = S>) -> Self {
         Self::Choice {
             options: options.into_iter().map(Into::into).collect(),
+        }
+    }
+
+    pub fn code(max: u32, lang: Option<&str>) -> Self {
+        Self::Code {
+            max,
+            lang: lang.map(Into::into),
         }
     }
 

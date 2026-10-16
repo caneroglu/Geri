@@ -471,6 +471,32 @@ geri-action { display: contents; }
 .ctl .unit { color: var(--foreground2); font-size: 0.85em; }
 .save { display: inline-flex; gap: 1ch; align-items: center; flex-wrap: wrap; }
 .diff { color: var(--gold); font-size: 0.85em; font-variant-numeric: tabular-nums; }
+/* Kod kutusu: saydam textarea, arkasında boyanmış <pre>; ikisi aynı hücrede, aynı kırma. */
+.ctl-row .w.block { flex-basis: 100%; flex-direction: column; align-items: stretch; }
+geri-code {
+  display: grid; width: 100%; max-height: 24lh; overflow: auto;
+  background: var(--background1); border: 1px solid var(--background3);
+}
+geri-code > pre, geri-code > textarea {
+  grid-area: 1 / 1; margin: 0; padding: 0.5lh 1ch; border: 0; min-height: 6lh;
+  font: inherit; line-height: inherit; letter-spacing: inherit; tab-size: 2;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal;
+}
+geri-code > pre { pointer-events: none; color: var(--foreground1); }
+geri-code > textarea {
+  resize: none; overflow: hidden; outline: none;
+  background: transparent; color: transparent; caret-color: var(--foreground0);
+}
+geri-code:focus-within { border-color: var(--frost-dim); }
+.ctl.pending geri-code { border-color: var(--gold); }
+.hl-cmnt { color: var(--foreground2); }
+.hl-section { color: var(--frost); font-weight: 700; }
+.hl-var { color: var(--teal); }
+.hl-str { color: var(--gold); }
+.hl-num, .hl-bool { color: var(--purple); }
+.hl-type { color: var(--indigo); }
+.hl-oper { color: var(--foreground2); }
+.hl-err { color: var(--crit); }
 .more-controls summary { color: var(--foreground2); cursor: pointer; font-size: 0.85em; }
 
 /* ── mobil: tek kolon, geniş/uzun paneller yayılmaz, sıra aynı ──── */

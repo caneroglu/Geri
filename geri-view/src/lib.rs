@@ -23,6 +23,8 @@ pub const AUGMENTED_PATH: &str = "/static/augmented-ui-2.0.0.min.css";
 pub const AUGMENTED_CSS_GZ: &[u8] = include_bytes!("../assets/augmented-ui-2.0.0.min.css.gz");
 const CSS: &str = include_str!("../assets/style.css");
 const ACTION_JS: &str = include_str!("../assets/actions.js");
+const HL_JS: &str = include_str!("../assets/speed-highlight-2.1.0.js");
+const CODE_JS: &str = include_str!("../assets/code.js");
 
 pub const STREAM_PATH: &str = "/akis";
 pub const NODE_PATH: &str = "/n/";
@@ -165,6 +167,8 @@ fn shell(busy: bool, stream: &str, body: Markup) -> Markup {
                 style { (PreEscaped(CSS)) }
                 script type="module" src=(DATASTAR_PATH) data-cfasync="false" {}
                 script { (PreEscaped(ACTION_JS)) }
+                script { (PreEscaped(HL_JS)) }
+                script { (PreEscaped(CODE_JS)) }
             }
             body data-signals:offline="false" data-signals:busy=(busy) data-init=[(!stream.is_empty()).then(|| connect(stream))] data-on:datastar-fetch=(ON_FETCH) {
                 main class="chassis" data-augmented-ui="tl-clip tr-clip br-clip bl-clip b-clip-x border inlay" {
@@ -857,6 +861,46 @@ mod tests {
         assert!(body.contains("salt okunur") && !body.contains("/c/led"));
         let at = |s: &str| body.find(s).unwrap();
         assert!(at("danger-rule") < at("BASILI TUT") && at("GERİ AL · wan") < at("danger-rule"));
+    }
+
+    #[test]
+    fn code_control_is_a_highlighted_textarea_without_inline_diff() {
+        let e = [Entity::new("freki", "models.config")
+            .label("model ayarı")
+            .control(Shape::code(2048, Some("toml")), Danger::Risky)];
+        let v = Values::from([(
+            "models.config".into(),
+            Value::Text("[roles]\nevolve = \"abonelik\"\n".into()),
+        )]);
+        let sheet = Sheet {
+            entities: &e,
+            values: &v,
+            commands: &[],
+            commander: Some(Commander {
+                endpoint: "/odn/commands",
+                live: true,
+            }),
+            presenter: None,
+        };
+        let body = body(&sheet);
+        let key = signal_key("freki", "models.config");
+        assert!(body.contains(r#"<geri-code data-lang="toml">"#));
+        // Datastar morph'u boyanmış katmanı silmesin.
+        assert!(body.contains(r#"<pre data-ignore-morph aria-hidden="true"><code></code></pre>"#));
+        assert!(
+            body.contains(&format!(r#"data-bind="_c_{key}""#))
+                && body.contains(r#"maxlength="2048""#)
+        );
+        assert!(body.contains("<textarea") && body.contains(r#"spellcheck="false""#));
+        // Kutu bildirilen değerle dolu açılır.
+        assert!(
+            body.contains(r#"[roles]\nevolve = \&quot;abonelik\&quot;"#),
+            "{body}"
+        );
+        // Çok satırlı değerde satır içi "eski → yeni" farkı gösterilmez.
+        assert!(!body.contains("' → '"));
+        assert!(body.contains(">KAYDET<"));
+        assert!(CODE_JS.contains("customElements.define('geri-code'") && HL_JS.contains("GeriHL"));
     }
 
     #[test]

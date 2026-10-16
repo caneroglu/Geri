@@ -16,6 +16,9 @@ fn main() {
             Danger::Risky,
         ),
         Entity::new("fixture", "safe").control(Shape::Trigger, Danger::Safe),
+        Entity::new("fixture", "config")
+            .label("ayar")
+            .control(Shape::code(2048, Some("toml")), Danger::Risky),
     ];
     let values = Values::from([
         (
@@ -36,6 +39,12 @@ fn main() {
             ),
         ),
         ("level".into(), Value::Uint(7)),
+        (
+            "config".into(),
+            Value::Text(
+                "# rol başına model\n[roles]\nevolve  = \"abonelik\"\nreflect = \"openrouter/openai/gpt-6-luna-pro\"\nbatch   = \"openrouter/meta/muse-spark-1.3-contributor\"\n\n[limits]\nmax_usd = 2.5\nfallback = true\n".into(),
+            ),
+        ),
     ]);
     let sheet = Sheet {
         entities: &entities,

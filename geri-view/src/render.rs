@@ -9,6 +9,8 @@ use crate::{Level, SHOW_MAX, Values, clip_chars, show, widget};
 pub const MAX_COLS: u8 = 4;
 const MODULE_ROWS: u8 = 6;
 pub(crate) const MAX_VISIBLE_CONTROLS: usize = 5;
+/// Kod kutusu kartı uzun çizer.
+const CODE_ROWS: u8 = 5;
 pub(crate) const MAX_ITEMS: usize = 8;
 pub const UPTIME: &str = "uptime";
 
@@ -212,8 +214,14 @@ fn panel(sheet: &Sheet, key: &str, members: &[&Entity], state: &mut Presentation
             lines.push((title(e), v));
         }
         if let (Some(c), Some(face)) = (&e.control, sheet.commander) {
-            if matches!(c.shape, Shape::Text { .. } | Shape::Item { .. }) {
+            if matches!(
+                c.shape,
+                Shape::Text { .. } | Shape::Code { .. } | Shape::Item { .. }
+            ) {
                 wide = true;
+            }
+            if matches!(c.shape, Shape::Code { .. }) {
+                rows += CODE_ROWS;
             }
             controls.push(widget::control(e, c, sheet, face));
         }
