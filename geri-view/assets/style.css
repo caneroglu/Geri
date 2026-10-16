@@ -121,6 +121,7 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--module), calc((100% - (var(--cols) - 1) * var(--gutter)) / var(--cols)))), 1fr));
   grid-auto-flow: row;
   column-gap: var(--gutter);
+  row-gap: 0.5lh;
   align-items: stretch;
 }
 .cell { display: flex; flex-direction: column; min-width: 0; }
@@ -142,6 +143,10 @@ body {
 .panel.warn, .panel.crit { --box-border-color: color-mix(in srgb, var(--accent) 55%, var(--background2)); }
 /* WebTUI bu değişkeni `inherits: false` ile kaydediyor; pseudo'ya doğrudan verilmeli. */
 .panel::before { --box-border-width: 1px; }
+/* WebTUI çizgiyi kutunun 0.5ch/0.5lh içine çizer ve yalnız 1ch/1lh padding verir: içerik çizgiye
+   yapışır. İçerik çizgiden yanlarda 1.5ch, altta 0.75lh uzak dursun; başlık üst çizgide kalır. */
+.panel { padding-inline: 2ch; padding-bottom: 1.25lh; }
+.panel-head { margin-bottom: 0.4lh; }
 
 .panel-head { display: flex; justify-content: space-between; }
 .panel-head [is-~=badge] { --badge-color: var(--background1); --badge-text: var(--foreground2); }
@@ -155,6 +160,8 @@ body {
   line-height: 1.3;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .panel:is(.warn, .crit) .value { color: var(--accent); }
 .value small { font-size: 0.55em; font-weight: 400; color: var(--foreground2); }
@@ -374,6 +381,7 @@ body {
 .items li {
   display: flex;
   align-items: center;
+  gap: 1ch;
   min-width: 0;
 }
 .items .item-link {

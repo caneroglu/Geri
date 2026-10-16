@@ -16,6 +16,19 @@ fn main() {
             Danger::Risky,
         ),
         Entity::new("fixture", "safe").control(Shape::Trigger, Danger::Safe),
+        Entity::new("fixture", "cpu")
+            .label("CPU kullanımı")
+            .kind("gauge")
+            .group("Sistem"),
+        Entity::new("fixture", "ram")
+            .label("RAM kullanımı")
+            .kind("gauge")
+            .group("Sistem"),
+        Entity::new("fixture", "power")
+            .label("güç")
+            .kind("text")
+            .group("Sistem"),
+        Entity::new("fixture", "job").label("iş").kind("text"),
         Entity::new("fixture", "config")
             .label("ayar")
             .control(Shape::code(2048, Some("toml")), Danger::Risky),
@@ -39,6 +52,10 @@ fn main() {
             ),
         ),
         ("level".into(), Value::Uint(7)),
+        ("cpu".into(), Value::Float(42.5)),
+        ("ram".into(), Value::Float(71.0)),
+        ("power".into(), Value::Text("running".into())),
+        ("job".into(), Value::Text("circle-packing · nesil 12/20 · en iyi 2.493".into())),
         (
             "config".into(),
             Value::Text(
